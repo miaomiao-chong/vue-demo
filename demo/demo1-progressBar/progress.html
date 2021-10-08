@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <audio ref="audioRef" autoplay @canplay='canplay' @timeupdate='update'></audio>
+    <button @click="play">播放</button>
+    <button @click="pause">暂停</button>
+    <div class="progress-wrapper">
+      <span class="time time-l">{{formatTime(currentTime)}}</span>
+      <div class="progress-bar-wrapper">
+        <cpn :progress=progress></cpn>
+      </div>
+      <span class="time time-l">{{formatTime(duration)}}</span>
+    </div>
+
+  </div>
+
+  <!-- 子组件 -->
+  <template id="myCpn">
+
+    <div class="progress-bar">
+      <!-- 后面黑色的一条 -->
+      <div class="bar-inner">
+        <!-- 已经播放的区域 -->
+        <div class="progress" :style='progressStyle'>
+        </div>
+        <!-- btn -->
+        <div class="progress-btn-wrapper" :style='btnStyle'>
+          <div class="progress-btn"></div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+
+  <script src="../../js/vue.js"></script>
+
+  <script>
+    audioEl = null
+    const progressBtnWidth = 16
+    // 子组件
+    const cpn = {
+      template: "#myCpn",
+      props: {
+        progress: {
+          type: Number,
+          default: 0
+        }
+      },
+      data() {
+        return {
+          offset: 0
+        }
+      },
+      mounted() {
+
+      },
+      computed: {
+        progressStyle() {
+          return `width: ${this.offset}px`
+        },
+        btnStyle() {
+          // console.log('fds');
+          return `transform: translate3d(${this.offset}px,0,0)`
+        },
+      },
+      watch: {
+        progress(newProgress) {
+          // 进度条宽度
+          const barWidth = this.$el.clientWidth - progressBtnWidth
+          this.offset = barWidth * newProgress
+        }
+      },
+      methods: {
+
+      },
+    }
+
+    const app = new Vue({
+      el: "#app",
+      data: {
+        content: 'fdasdf',
+        src: 'https://webfs.tx.kugou.com/202110080947/0cebe1b79722c5ce62c362e76e071e19/G060/M09/00/11/HJQEAFbRRM-AVOSeADxTwivtZiI118.mp3',
+        currentTime: 0,
+        duration: 0
+      },
+      components: {
+        cpn
+      },
+ 
+      mounted() {
+        this.$nextTick(() => {
+          audioEl = this.$refs.audioRef
+          audioEl.src = this.src
+          // 默认暂停
+          audioEl.pause()
+        })
+      },
+      computed: {
+        progress() {
+          return this.currentTime / this.duration
+          console.log("progress", this.currentTime / this.duration);
+        },
+
+      },
+      methods: {
+        play() {
+          audioEl.play()
+        },
+        pause() {
+          audioEl.pause()
+        },
+        canplay(e) {
+          // console.log(123456);
+          console.log(e);
+          this.duration = e.target.duration
+        },
+        update(e) {
+          this.currentTime = e.target.currentTime
+        },
+        formatTime(interval) {
+          // interval 向下取整
+          interval = interval | 0
+          // 不足两位的话就向前填充一个0
+          let minute = ((interval / 60 | 0) + '')
+          let second = ((interval % 60 | 0) + '')
+          let len = minute.length
+          for( ;len<2;len++){
+            minute='0'+minute
+          }
+          len = second.length
+          for( ;len<2;len++){
+            second='0'+second
+          }
+          return `${minute}:${second}`
+        }
+      },
+    })
+  </script>
+</body>
+<style>
+  #app {
+    width: 100%;
+  }
+
+  .progress-wrapper {
+    display: flex;
+    width: 80%;
+    padding: 10px 0;
+    align-items: center;
+    margin: 0 auto;
+  }
+
+  .time {
+    width: 40px;
+    flex: 0 0 40px;
+    font-size: 8px;
+    margin: 0 auto;
+    padding: 0 8px;
+  }
+
+  .time-l {
+    text-align: left;
+  }
+
+  .time-l {
+    text-align: right;
+  }
+
+  .progress-bar-wrapper {
+    flex: 1;
+  }
+
+  /* 子组件样式 */
+  .progress-bar {
+    height: 30px;
+  }
+
+  .bar-inner {
+    position: relative;
+    top: 11px;
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .progress {
+    position: absolute;
+    height: 100%;
+    background-color: yellow;
+  }
+
+  .progress-btn-wrapper {
+    position: absolute;
+    left: -8px;
+    top: -11px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .progress-btn {
+    position: relative;
+    top: 7px;
+    left: 7px;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    border: 3px solid blue;
+    border-radius: 50%;
+    background: pink;
+  }
+</style>
+
+</html>
