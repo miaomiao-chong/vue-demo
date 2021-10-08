@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+</head>
+
+<body>
+  <div id="app">
+    {{content}}
+    <cpn :ccontent=content></cpn>
+  </div>
+
+  <!-- 子组件 -->
+  <template id="myCpn">
+    <div>
+      {{ccontent}}
+    </div>
+  </template>
+
+
+  <script src="../js/vue.js"></script>
+  <script>
+    const cpn = {
+      template: "#myCpn",
+      props: ['ccontent'],
+    }
+
+    const app = new Vue({
+      el: "#app",
+      data: {
+        content: 'fdasdf'
+      },
+      components: {
+        cpn
+      }
+    })
+  </script>
+</body>
+
+</html>
