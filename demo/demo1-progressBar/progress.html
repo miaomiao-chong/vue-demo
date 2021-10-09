@@ -16,7 +16,10 @@
     <div class="progress-wrapper">
       <span class="time time-l">{{formatTime(currentTime)}}</span>
       <div class="progress-bar-wrapper">
-        <cpn :progress=progress></cpn>
+        <cpn :progress=progress 
+          @progress-changing="onProgressChanging" 
+          @progress-changed='progressChanged'>
+       </cpn>
       </div>
       <span class="time time-l">{{formatTime(duration)}}</span>
     </div>
@@ -30,10 +33,11 @@
       <!-- 后面黑色的一条 -->
       <div class="bar-inner">
         <!-- 已经播放的区域 -->
-        <div class="progress" :style='progressStyle'>
+        <div class="progress" :style='progressStyle' ref="progress">
         </div>
         <!-- btn -->
-        <div class="progress-btn-wrapper" :style='btnStyle'>
+        <div class="progress-btn-wrapper" :style='btnStyle' @touchstart.preventDefault='onTouchStart'
+          @touchmove.preventDefault='onTouchMove' @touchend.preventDefault='onTouchEnd'>
           <div class="progress-btn"></div>
         </div>
       </div>
@@ -63,6 +67,9 @@
       mounted() {
 
       },
+      created() {
+        this.touch = {}
+      },
       computed: {
         progressStyle() {
           return `width: ${this.offset}px`
@@ -80,7 +87,36 @@
         }
       },
       methods: {
+        onTouchStart(e) {
+          // console.log(e);
+          this.touch.x1 = e.changedTouches[0].clientX
+          // 黄色进度条初始宽度
+          this.touch.beginWidth = this.$refs.progress.clientWidth
+          console.log(this.touch);
+        },
+        onTouchMove(e) {
+          // console.log(e);
+          // x偏移量
+          const delta = e.changedTouches[0].clientX - this.touch.x1
+          // 之前的width+这次拖动增加的偏移量=应有的黄条长度
+          const tempWidth = this.touch.beginWidth + delta
+          // 再拿到barWidth
+          const barWidth = this.$el.clientWidth - progressBtnWidth
+          // 黄条长度/barwidth = progress 现在应该有的进度
+          const progress = tempWidth / barWidth
+          this.offset = barWidth * progress
+          this.$emit('progress-changing', progress)
+          // console.log("tempWidth", tempWidth);
+          // console.log("barWidth", barWidth);
+          // console.log("progress", progress);
 
+        },
+        onTouchEnd(e) {
+          // console.log(e);
+          const barWidth = this.$el.clientWidth - progressBtnWidth
+          const progress = this.$refs.progress.clientWidth / barWidth
+          this.$emit('progress-changed', progress)
+        }
       },
     }
 
@@ -88,14 +124,16 @@
       el: "#app",
       data: {
         content: 'fdasdf',
-        src: 'https://webfs.tx.kugou.com/202110080947/0cebe1b79722c5ce62c362e76e071e19/G060/M09/00/11/HJQEAFbRRM-AVOSeADxTwivtZiI118.mp3',
+        src: 'https://music.163.com/song/media/outer/url?id=1463165983.mp3',
         currentTime: 0,
-        duration: 0
+        duration: 0,
+        isplay: false,
+        progressChanging : false
       },
       components: {
         cpn
       },
- 
+
       mounted() {
         this.$nextTick(() => {
           audioEl = this.$refs.audioRef
@@ -114,9 +152,12 @@
       methods: {
         play() {
           audioEl.play()
+          this.isplay = true
         },
         pause() {
           audioEl.pause()
+          this.isplay = false
+          // console.log();
         },
         canplay(e) {
           // console.log(123456);
@@ -124,7 +165,24 @@
           this.duration = e.target.duration
         },
         update(e) {
-          this.currentTime = e.target.currentTime
+          if(!this.progressChanging){
+            this.currentTime = e.target.currentTime
+          }
+        },
+        onProgressChanging(e) {
+          // console.log("onProgressChanging", e);
+          this.progressChanging = true
+          // 实时修改currentTime值
+          this.currentTime = this.duration * e 
+        },
+        progressChanged(e){
+          // console.log(e);
+          this.progressChanging = false
+          audioEl.currentTime = this.currentTime= this.duration * e 
+          if(!this.isplay){
+            console.log("------");
+            audioEl.play()
+          }
         },
         formatTime(interval) {
           // interval 向下取整
@@ -133,15 +191,16 @@
           let minute = ((interval / 60 | 0) + '')
           let second = ((interval % 60 | 0) + '')
           let len = minute.length
-          for( ;len<2;len++){
-            minute='0'+minute
+          for (; len < 2; len++) {
+            minute = '0' + minute
           }
           len = second.length
-          for( ;len<2;len++){
-            second='0'+second
+          for (; len < 2; len++) {
+            second = '0' + second
           }
           return `${minute}:${second}`
-        }
+        },
+
       },
     })
   </script>
