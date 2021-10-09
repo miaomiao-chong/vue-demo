@@ -31,13 +31,13 @@
 
     <div class="progress-bar">
       <!-- 后面黑色的一条 -->
-      <div class="bar-inner">
+      <div class="bar-inner" @click="clickProgress">
         <!-- 已经播放的区域 -->
         <div class="progress" :style='progressStyle' ref="progress">
         </div>
         <!-- btn -->
         <div class="progress-btn-wrapper" :style='btnStyle' @touchstart.preventDefault='onTouchStart'
-          @touchmove.preventDefault='onTouchMove' @touchend.preventDefault='onTouchEnd'>
+          @touchmove.preventDefault='onTouchMove' @touchend.preventDefault='onTouchEnd' >
           <div class="progress-btn"></div>
         </div>
       </div>
@@ -116,6 +116,18 @@
           const barWidth = this.$el.clientWidth - progressBtnWidth
           const progress = this.$refs.progress.clientWidth / barWidth
           this.$emit('progress-changed', progress)
+        },
+        // 点击进度条
+        clickProgress(e){
+          // console.log("fds");
+          console.log('getBoundingClientRect', this.$el.getBoundingClientRect());
+          const rect = this.$el.getBoundingClientRect()
+          // 黄条应有的宽度
+          const offsetWidth = e.pageX - rect.x
+          const barWidth = this.$el.clientWidth - progressBtnWidth
+          const progress = offsetWidth/barWidth
+          this.$emit('progress-changed', progress)
+          console.log(offsetWidth)
         }
       },
     }
