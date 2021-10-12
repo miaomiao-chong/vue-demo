@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <audio ref="audioRef" autoplay @canplay='canplay' @timeupdate='update'></audio>
+    <button @click="play">播放</button>
+    <button @click="pause">暂停</button>
+    <div class="progress-wrapper">
+      <span class="time time-l">{{formatTime(currentTime)}}</span>
+      <div class="progress-bar-wrapper">
+        <cpn :progress=progress 
+          @progress-changing="onProgressChanging" 
+          @progress-changed='progressChanged'>
+       </cpn>
+      </div>
+      <span class="time time-l">{{formatTime(duration)}}</span>
+    </div>
+
+  </div>
+
+  <!-- 子组件 -->
+  <template id="myCpn">
+
+    <div class="progress-bar">
+      <!-- 后面黑色的一条 -->
+      <div class="bar-inner" @click="clickProgress">
+        <!-- 已经播放的区域 -->
+        <div class="progress" :style='progressStyle' ref="progress">
+        </div>
+        <!-- btn -->
+        <div class="progress-btn-wrapper" :style='btnStyle' @touchstart.preventDefault='onTouchStart'
+          @touchmove.preventDefault='onTouchMove' @touchend.preventDefault='onTouchEnd' >
+          <div class="progress-btn"></div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+
+  <script src="../../js/vue.js"></script>
+
+  <script>
+    audioEl = null
+    const progressBtnWidth = 16
+    // 子组件
+    const cpn = {
+      template: "#myCpn",
+      props: {
+        progress: {
+          type: Number,
+          default: 0
+        }
+      },
+      data() {
+        return {
+          offset: 0
+        }
+      },
+      mounted() {
+
+      },
+      created() {
+        this.touch = {}
+      },
+      computed: {
+        progressStyle() {
+          return `width: ${this.offset}px`
+        },
+        btnStyle() {
+          // console.log('fds');
+          return `transform: translate3d(${this.offset}px,0,0)`
+        },
+      },
+      watch: {
+        progress(newProgress) {
+          // 进度条宽度
+          const barWidth = this.$el.clientWidth - progressBtnWidth
+          this.offset = barWidth * newProgress
+        }
+      },
+      methods: {
+        onTouchStart(e) {
+          // console.log(e);
+          this.touch.x1 = e.changedTouches[0].clientX
+          // 黄色进度条初始宽度
+          this.touch.beginWidth = this.$refs.progress.clientWidth
+          console.log(this.touch);
+        },
+        onTouchMove(e) {
+          // console.log(e);
+          // x偏移量
+          const delta = e.changedTouches[0].clientX - this.touch.x1
+          // 之前的width+这次拖动增加的偏移量=应有的黄条长度
+          const tempWidth = this.touch.beginWidth + delta
+          // 再拿到barWidth
+          const barWidth = this.$el.clientWidth - progressBtnWidth
+          // 黄条长度/barwidth = progress 现在应该有的进度
+          const progress = tempWidth / barWidth
+          this.offset = barWidth * progress
+          this.$emit('progress-changing', progress)
+          // console.log("tempWidth", tempWidth);
+          // console.log("barWidth", barWidth);
+          // console.log("progress", progress);
+
+        },
+        onTouchEnd(e) {
+          // console.log(e);
+          const barWidth = this.$el.clientWidth - progressBtnWidth
+          const progress = this.$refs.progress.clientWidth / barWidth
+          this.$emit('progress-changed', progress)
+        },
+        // 点击进度条
+        clickProgress(e){
+          // console.log("fds");
+          console.log('getBoundingClientRect', this.$el.getBoundingClientRect());
+          const rect = this.$el.getBoundingClientRect()
+          // 黄条应有的宽度
+          const offsetWidth = e.pageX - rect.x
+          const barWidth = this.$el.clientWidth - progressBtnWidth
+          // const progress = offsetWidth/barWidth
+          const progress = Math.min(1, Math.max(tempWidth / barWidth, 0))
+          this.$emit('progress-changed', progress)
+          console.log(offsetWidth)
+        }
+      },
+    }
+
+    const app = new Vue({
+      el: "#app",
+      data: {
+        content: 'fdasdf',
+        // 天外来物
+        src: 'https://music.163.com/song/media/outer/url?id=1463165983.mp3',
+        currentTime: 0,
+        duration: 0,
+        isplay: false,
+        progressChanging : false,
+        lyric: "[00:00.000] 作词 : 薛之谦\n[00:01.000] 作曲 : 罗小黑\n[00:02.000] 编曲 : 周以力\n[00:03.000] 制作人 : 周以力/郑伟\n[00:18.042]你降落的 太突然了\n[00:24.240]我刚好呢 又路过了\n[00:32.325]机会难得 又主观觉得\n[00:38.725]想明抢 又碰不得\n[00:46.157]你带来了 我的快乐\n[00:53.157]让这世界 有点颜色\n[01:00.444]我好想指责 你太随意了\n[01:06.991]宝物该有人捧着  你是不是我的\n[01:17.333]你像 天外来物一样 求之不得\n[01:24.269]你在世俗里的名字 不重要了\n[01:31.516]正好 我隐藏的人格是锲而不舍\n[01:38.299]直到蜂拥而至的人都透明了\n[01:45.943]我在 不近又不远处\n[01:49.925]用明天换你 靠近我\n[02:07.554]你占领了 我的快乐\n[02:14.406]和这世界 已没有瓜葛\n[02:21.639]任事物干渴  都褪去颜色\n[02:28.340]只有你是天蓝色  我开始找你了\n[02:40.569]会像 天外来物一样 失而复得\n[02:47.769]你在世俗里的名字  被人用了\n[02:54.662]反正 我隐藏的人格是锲而不舍\n[03:01.730]直到蜂拥而至的人都透明了\n[03:08.793]我在 不近又不远处\n[03:12.651]用明天换你 靠近我\n[03:18.765]你就像 天外来物一样 求之不得\n[03:26.717]我在世俗里的描写被取笑了\n[03:33.681]反正我隐藏的人格是非你不可\n[03:40.352]直到别有用心的人都透明了\n[03:47.895]我在 不近又不远处\n[03:52.044]用明天换你 靠近我\n[03:54.560] 吉他 : 张淞\n[03:57.076] 大提琴 : 郎莹\n[03:59.592] 鼓 : 褚伟明\n[04:02.108] 贝斯 : 努而德柯\n[04:04.624] 人声录音 : 郑伟 夏之炜 吴身宝\n[04:07.140] 人声编辑 : 郑伟\n[04:09.656] 人声录音室 : 上海广播大厦200studio\n[04:12.172] 乐器录音棚 : soundhub studio\n[04:14.688] 混音 : 全相彦 @OK master studio\n[04:17.204] 母带 : 全相彦 @OK master studio\n"
+      },
+      components: {
+        cpn
+      },
+
+      mounted() {
+        this.$nextTick(() => {
+          audioEl = this.$refs.audioRef
+          audioEl.src = this.src
+          // 默认暂停
+          audioEl.pause()
+        })
+      },
+      computed: {
+        progress() {
+          return this.currentTime / this.duration
+          console.log("progress", this.currentTime / this.duration);
+        },
+
+      },
+      methods: {
+        play() {
+          audioEl.play()
+          this.isplay = true
+        },
+        pause() {
+          audioEl.pause()
+          this.isplay = false
+          // console.log();
+        },
+        canplay(e) {
+          // console.log(123456);
+          console.log(e);
+          this.duration = e.target.duration
+        },
+        update(e) {
+          if(!this.progressChanging){
+            this.currentTime = e.target.currentTime
+          }
+        },
+        onProgressChanging(e) {
+          // console.log("onProgressChanging", e);
+          this.progressChanging = true
+          // 实时修改currentTime值
+          this.currentTime = this.duration * e 
+        },
+        progressChanged(e){
+          // console.log(e);
+          this.progressChanging = false
+          audioEl.currentTime = this.currentTime= this.duration * e 
+          if(!this.isplay){
+            console.log("------");
+            audioEl.play()
+          }
+        },
+        formatTime(interval) {
+          // interval 向下取整
+          interval = interval | 0
+          // 不足两位的话就向前填充一个0
+          let minute = ((interval / 60 | 0) + '')
+          let second = ((interval % 60 | 0) + '')
+          let len = minute.length
+          for (; len < 2; len++) {
+            minute = '0' + minute
+          }
+          len = second.length
+          for (; len < 2; len++) {
+            second = '0' + second
+          }
+          return `${minute}:${second}`
+        },
+
+      },
+    })
+  </script>
+</body>
+<style>
+  #app {
+    width: 100%;
+  }
+
+  .progress-wrapper {
+    display: flex;
+    width: 80%;
+    padding: 10px 0;
+    align-items: center;
+    margin: 0 auto;
+  }
+
+  .time {
+    width: 40px;
+    flex: 0 0 40px;
+    font-size: 8px;
+    margin: 0 auto;
+    padding: 0 8px;
+  }
+
+  .time-l {
+    text-align: left;
+  }
+
+  .time-l {
+    text-align: right;
+  }
+
+  .progress-bar-wrapper {
+    flex: 1;
+  }
+
+  /* 子组件样式 */
+  .progress-bar {
+    height: 30px;
+  }
+
+  .bar-inner {
+    position: relative;
+    top: 11px;
+    height: 8px;
+    background-color: rgba(87, 82, 82, 0.062);
+    border-radius: 5px;
+  }
+
+  .progress {
+    position: absolute;
+    height: 100%;
+    background-color: rgb(238, 238, 136);
+  }
+
+  .progress-btn-wrapper {
+    position: absolute;
+    left: -8px;
+    top: -11px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .progress-btn {
+    position: relative;
+    top: 7px;
+    left: 7px;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    border: 3px solid rgb(189, 189, 218);
+    border-radius: 50%;
+    background: rgb(123, 192, 212);
+  }
+</style>
+
+</html>
