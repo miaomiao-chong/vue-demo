@@ -125,7 +125,8 @@
           // 黄条应有的宽度
           const offsetWidth = e.pageX - rect.x
           const barWidth = this.$el.clientWidth - progressBtnWidth
-          const progress = offsetWidth/barWidth
+          // const progress = offsetWidth/barWidth
+          const progress = Math.min(1, Math.max(tempWidth / barWidth, 0))
           this.$emit('progress-changed', progress)
           console.log(offsetWidth)
         }
@@ -259,13 +260,14 @@
     position: relative;
     top: 11px;
     height: 8px;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(87, 82, 82, 0.062);
+    border-radius: 5px;
   }
 
   .progress {
     position: absolute;
     height: 100%;
-    background-color: yellow;
+    background-color: rgb(238, 238, 136);
   }
 
   .progress-btn-wrapper {
@@ -283,9 +285,9 @@
     box-sizing: border-box;
     width: 16px;
     height: 16px;
-    border: 3px solid blue;
+    border: 3px solid rgb(189, 189, 218);
     border-radius: 50%;
-    background: pink;
+    background: rgb(123, 192, 212);
   }
 </style>
 

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div id="app">
+    <img :src="imgSrc" class="image" :style=" animationState"/>
+    <br>
+    <div class="btnContainer">
+        <button @click="handlePlay">旋转</button>
+        <button @click="handlePause">暂停</button>
+    </div>
+</div>
+
+<script src="../../js/vue.js"></script>
+<script>
+  const app = new Vue({
+    el: "#app",
+    data: {
+      imgSrc: 'https://img-blog.csdnimg.cn/a0d98281da88480aa8be2e0dbda23fd6.jpg',
+      isPlay: false
+    },
+    computed: {
+      // 根据isplay计算播放状态
+      state() {
+        if (this.isPlay) {
+          return 'running'
+        } else {
+          return 'paused'
+        }
+      },
+      // 根据状态决定是否播放
+      animationState() {
+        return {
+          animationPlayState: this.state
+        }
+      }
+    },
+    methods: {
+      handlePlay() {
+        // console.log("fdsadfa")
+        this.isPlay = true
+      },
+      handlePause() {
+        this.isPlay = false
+      }
+    }
+
+  })
+</script>
+</body>
+<style>
+    #app {
+        width: 100%;
+    }
+
+    .image {
+        display: block;
+        margin: 0 auto;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 10px solid rgba(0, 0, 0, 0.3);
+        animation: rotateImg 10s linear infinite;
+    }
+
+    @keyframes rotateImg {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .btnContainer {
+        /*margin: 0 auto ;*/
+        display: flex;
+        justify-content: center;
+    }
+
+    button:nth-child(1) {
+        margin-right: 5px;
+    }
+
+</style>
+</html>
