@@ -23,14 +23,14 @@
         </div>
         <span class="time time-l">{{formatTime(duration)}}</span>
     </div>
-    <div class="lyric-container" @scroll="onScroll" ref="lyricContainer">
-        <div class="cotnent">
+    <div class="lyric-container" ref="lyricContainer">
+        <div class="cotnent" ref="lyricListRef">
             <p class="text" v-for="(line, index) in currentLyric.lines" :class="{'current': currentLineNum ===index}">
                 {{line.txt}}
             </p>
         </div>
     </div>
-    <button @click="startScroll">点我开始</button>
+<!--    <button @click="startScroll">点我开始</button>-->
 
 </div>
 
@@ -59,6 +59,7 @@
 
   let audioEl;
   let lyricEl;
+  let lyricListEl = null
   audioEl = null
   lyricEl = null
   const progressBtnWidth = 16
@@ -165,11 +166,13 @@
       this.$nextTick(() => {
         audioEl = this.$refs.audioRef
         audioEl.src = this.src
-        audioEl.volume=0.1
+        audioEl.volume = 0.1
         console.log(this.$refs.audioRef)
         // 默认暂停
         audioEl.pause()
         lyricEl = this.$refs.lyricContainer
+        lyricListEl = this.$refs.lyricListRef
+        console.log("lyricListEl", lyricListEl)
         // this.currentLyric = new Lyric(this.lyric, this.handleLyric)
       })
       // console.log(window)
@@ -233,23 +236,31 @@
       // -----------歌词有关-------------
       // 歌词滚动条
       handleLyric({lineNum, txt}) {
-        console.log(this.currentLyric)
-        console.log(lineNum, txt)
+        // console.log(this.currentLyric)
+        // console.log(lineNum, txt)
         this.currentLineNum = lineNum
-      },
-      onScroll(e) {
-        // console.log(e)
-        // lyricEl.scrollTop=19
-        // console.log(lyricEl)
-        // console.log("scrollTop", lyricEl.scrollTop)
+        if (!lyricListEl) {
+          return
+        }
+        if (lineNum > 3) {
+          const lineEl = lyricListEl.children[0]
+          // 拿到行的高度
+          const lineHeight= lineEl.clientHeight
+          // 滚动到哪里呢  到一行高度*当前的行-3行
+          lyricEl.scrollTo({
+            top: lineHeight*(lineNum-3),
+            left: 0,
+            behavior: 'smooth'
+          });
+        }
       },
       // 测试滚动功能
-      startScroll() {
-        // console.log(1)
-        setInterval(() => {
-          lyricEl.scrollTop += 42
-        }, 1000)
-      },
+      // startScroll() {
+      //   // console.log(1)
+      //   setInterval(() => {
+      //     lyricEl.scrollTop += 42
+      //   }, 1000)
+      // },
       // 播放歌词
       playLyric() {
         // clearTimeout()
@@ -357,11 +368,12 @@
     }
 
     .lyric-container {
-        padding: 5px;
+        padding: 0px;
         width: 300px;
         height: 300px;
         background-color: antiquewhite;
         overflow: scroll;
+
     }
 
     ::-webkit-scrollbar {
@@ -371,7 +383,11 @@
     }
 
     p {
+        display: block;
+        margin: 0;
+        padding: 10px;
         text-align: center;
+        box-sizing: border-box;
     }
 
     .current {
