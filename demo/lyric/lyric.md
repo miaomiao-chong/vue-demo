@@ -1,3 +1,13 @@
+# 演示
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/d3fbbcc9c7524bd2a3bd41d5010bbfb4.gif#pic_center)
+需要注意：引入vue.js与lyric-parser.js
+lyric-parser.js地址：https://github.com/ustbhuangyi/lyric-parser/blob/master/src/index.js
+因为是网易云的歌词，与这个库解析的歌词不适配，有个地方改一下就行了
+![在这里插入图片描述](https://img-blog.csdnimg.cn/72156b5185da44a288cd9077c99cb13f.png)
+
+# 代码
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -216,7 +226,7 @@
         // 实时修改currentTime值
         this.currentTime = this.duration * e
         console.log(this.currentTime)
-        this.playLyric()
+        this.stopLyric()
       },
       progressChanged(e) {
         this.stopLyric()
@@ -396,3 +406,95 @@
 </style>
 
 </html>
+```
+
+# 解说
+
+来看一下
+
+在音乐加载完之后（不应该在这里实例化，后面有改）
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/737b6628df2d486ba3b45155fdac20af.png)
+
+handleLyric   给currentLine赋值  用来高亮
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/7bd541fa44704081a45810d205967bfb.png)
+
+点击暂停和播放
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/04bb836a95854e9cbcf0560a57a29991.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_10,color_FFFFFF,t_70,g_se,x_16)
+
+播放音乐中
+
+
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/422da00373aa46f3ab899ec438091373.png)
+
+
+
+playLyric
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/87925d02e419447caf9f592fab4277e4.png)
+
+页面
+
+
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/b73cc54c435a4a26bee2d9bffb8915dc.png)
+
+但是会发现有时候高亮会有延迟，这是因为lyric-parser的问题
+
+修改方法
+
+https://github.com/ustbhuangyi/lyric-parser/issues/11
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/0e8cccb0159245faa0c0e051c6740ed6.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_20,color_FFFFFF,t_70,g_se,x_16)
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/77548ee8798840559b067ca12d405e95.png)
+
+
+
+这样就ok了
+
+但是发现个bug
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/7f45cfa99f5a4f3799e726caca21f66e.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_9,color_FFFFFF,t_70,g_se,x_16)
+
+它为什么会跳到前面
+
+试了一下，不拖动的话是没有问题的，但是一旦拖动或者点击再点暂停，暂停功能就会失效 
+
+为什么呢 因为如果拖动的话canplay是会触发的，所以可能创建了很多个实例，开了很多定时器（可以看lyric-parse的源码），上一个还没被销毁就又创建了一个，导致上一个还没有关掉  
+
+再来整理一下
+实例化
+![在这里插入图片描述](https://img-blog.csdnimg.cn/39673809aff746a2b4794bfa0a4f60dd.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_17,color_FFFFFF,t_70,g_se,x_16)
+
+playLyric与stopLyric
+![在这里插入图片描述](https://img-blog.csdnimg.cn/c72813ee546f4f538502129e4e1f8c18.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_12,color_FFFFFF,t_70,g_se,x_16)
+
+
+用到playLyric和stopLyric的地方
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/cd27a2ba7bac4b2e8bb4ab88a0ce4250.png)
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/edd03a2567794d5cb776c4a3712e702d.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_16,color_FFFFFF,t_70,g_se,x_16)
+
+这样高亮功能就完成了，接下来完成自动滚动
+
+希望的效果：前5行，不动，接下来第六行:当前减去前五行保证一直在中间的位置
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/aedc7875e5b94c20ad1ed6fc0bad3568.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_9,color_FFFFFF,t_70,g_se,x_16)
+
+获取外层滚动的盒子el，和滚动盒子里面内容的el
+
+获取外层滚动盒子的el是为了能够滚动，获取里面的内容是为了拿到里面的子元素，获取一行的dom，计算出它的高度
+
+我又改了一下样式，再来整理一下这个功能，因为p标签它自动会加上margin ,上下的margin还是重叠的，获取height的时候还不会加上margin的值，很麻烦，所以吧margin去掉了，换成了padding
+![在这里插入图片描述](https://img-blog.csdnimg.cn/700ce950a74b48e9897df314c3cbe859.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_12,color_FFFFFF,t_70,g_se,x_16)
+
+web-api scrollTo的用法
+
+https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollTo
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/0982c9aea09a4815905a80ed9f4333a8.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5Lyk5b-D5bCP546L5a2Q,size_12,color_FFFFFF,t_70,g_se,x_16)
