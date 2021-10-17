@@ -119,9 +119,6 @@
         const progress = tempWidth / barWidth
         this.offset = barWidth * progress
         this.$emit('progress-changing', progress)
-        // console.log("tempWidth", tempWidth);
-        // console.log("barWidth", barWidth);
-        // console.log("progress", progress);
 
       },
       onTouchEnd(e) {
@@ -132,16 +129,15 @@
       },
       // 点击进度条
       clickProgress(e) {
-        // console.log("fds");
         console.log('getBoundingClientRect', this.$el.getBoundingClientRect());
         const rect = this.$el.getBoundingClientRect()
         // 黄条应有的宽度
         const offsetWidth = e.pageX - rect.x
         const barWidth = this.$el.clientWidth - progressBtnWidth
         // const progress = offsetWidth/barWidth
-        const progress = Math.min(1, Math.max(tempWidth / barWidth, 0))
+        const progress = Math.min(1, Math.max(offsetWidth / barWidth, 0))
         this.$emit('progress-changed', progress)
-        console.log(offsetWidth)
+        // console.log(offsetWidth)
       }
     },
   }
@@ -163,16 +159,18 @@
     components: {
       cpn
     },
-
     mounted() {
       // 解析歌词
-      // let currentLyric = new Lyric(this.lyric, this.handleLyric)
+      this.currentLyric = new Lyric(this.lyric, this.handleLyric)
       this.$nextTick(() => {
         audioEl = this.$refs.audioRef
         audioEl.src = this.src
+        audioEl.volume=0.1
+        console.log(this.$refs.audioRef)
         // 默认暂停
         audioEl.pause()
         lyricEl = this.$refs.lyricContainer
+        // this.currentLyric = new Lyric(this.lyric, this.handleLyric)
       })
       // console.log(window)
     },
@@ -182,6 +180,7 @@
         console.log("progress", this.currentTime / this.duration);
       },
     },
+
     methods: {
       play() {
         audioEl.play()
@@ -189,51 +188,60 @@
         this.playLyric()
       },
       pause() {
+        console.log("pause")
         audioEl.pause()
         this.isplay = false
         // console.log();
-        this.currentLyric.stop()
+        this.stopLyric()
       },
       canplay(e) {
         // console.log(123456);
         // console.log(e);
+        console.log("canplay")
         this.duration = e.target.duration
-        let currentLyric = new Lyric(this.lyric, this.handleLyric)
-        this.currentLyric = currentLyric
+
       },
       update(e) {
         if (!this.progressChanging) {
           this.currentTime = e.target.currentTime
         }
+        // console.log(this.currentTime)
       },
       onProgressChanging(e) {
         // console.log("onProgressChanging", e);
         this.progressChanging = true
         // 实时修改currentTime值
         this.currentTime = this.duration * e
-        this.playLyric()
+        console.log(this.currentTime)
+        this.stopLyric()
       },
       progressChanged(e) {
+        this.stopLyric()
         // console.log(e);
         this.progressChanging = false
+
         audioEl.currentTime = this.currentTime = this.duration * e
         if (!this.isplay) {
           console.log("------");
           audioEl.play()
         }
+        // this.currentLyric.play(0)
+        // this.currentLyric.stop()
+        this.playLyric()
       },
 
       // -----------歌词有关-------------
       // 歌词滚动条
       handleLyric({lineNum, txt}) {
-          console.log(lineNum, txt)
-          this.currentLineNum = lineNum
+        console.log(this.currentLyric)
+        console.log(lineNum, txt)
+        this.currentLineNum = lineNum
       },
       onScroll(e) {
-        console.log(e)
+        // console.log(e)
         // lyricEl.scrollTop=19
         // console.log(lyricEl)
-        console.log("scrollTop", lyricEl.scrollTop)
+        // console.log("scrollTop", lyricEl.scrollTop)
       },
       // 测试滚动功能
       startScroll() {
@@ -244,8 +252,17 @@
       },
       // 播放歌词
       playLyric() {
-          console.log(this.currentLyric)
-          this.currentLyric.seek(this.currentTime * 1000)
+        // clearTimeout()
+        console.log(this.currentLyric.lines)
+        console.log("播放了")
+        console.log(this.currentLyric)
+        this.currentLyric.seek(this.currentTime * 1000)
+      },
+      stopLyric() {
+        console.log("暂停了")
+        if (this.currentLyric) {
+          this.currentLyric.stop()
+        }
       },
       formatTime(interval) {
         // interval 向下取整

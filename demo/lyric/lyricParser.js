@@ -27,6 +27,7 @@ export default class Lyric {
   }
 
   _init() {
+    console.log("init yici")
     this._initTag()
 
     this._initLines()
@@ -49,6 +50,7 @@ export default class Lyric {
         const txt = line.replace(timeExp, '').trim()
         if (txt) {
           this.lines.push({
+            // time: result[1] * 60 * 1000 + result[2] * 1000 + (result[3] || 0) * 10 + offset,
             // time: result[1] * 60 * 1000 + result[2] * 1000 + (result[3] || 0) * 10 + offset,
             time: result[1] * 60 * 1000 + result[2] * 1000 + (parseInt(result[3])||0 ) ,
             txt
@@ -84,7 +86,7 @@ export default class Lyric {
   _playRest() {
     let line = this.lines[this.curNum]
     let delay = line.time - (+new Date() - this.startStamp)
-
+    clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this._callHandler(this.curNum++)
       if (this.curNum < this.lines.length && this.state === STATE_PLAYING) {
@@ -94,6 +96,7 @@ export default class Lyric {
   }
 
   play(startTime = 0, skipLast) {
+
     if (!this.lines.length) {
       return
     }
@@ -125,11 +128,15 @@ export default class Lyric {
   }
 
   stop() {
+    console.log("stop")
     this.state = STATE_PAUSE
     clearTimeout(this.timer)
   }
 
   seek(offset) {
+    clearTimeout(this.timer)
+    console.log("seek")
     this.play(offset)
   }
 }
+
