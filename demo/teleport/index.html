@@ -6,17 +6,18 @@
     <script src="./vue.js"></script>
 </head>
 <body>
-<div id="hello-vue" class="box">
+<div id="hello-vue" class="box" >
     <div>我是父组件</div>
     <div>我是父组件</div>
     <div>我是父组件</div>
     <div>我是父组件</div>
     <div>我是父组件</div>
     <div>我是父组件</div>
-    <button @click="handleClick">点我显示子组件</button>
-    <cpn ref="compRef"></cpn>
+    <button @click="handleClick" >点我显示子组件</button>
+    <cpn ref="compRef" @show-confirm="showConfirm"></cpn>
+    <confirm  ref="confirmRef"></confirm>
 </div>
-
+<!--点击按钮后显示的那个组件-->
 <template id="mycpn">
     <transition name="list-fade">
         <div class="cpnContainer" v-show="isshow" @click.stop="hide()">
@@ -35,6 +36,15 @@
     </transition>
 
 </template>
+
+<!--确认关闭confirm组件-->
+<template id="confirm">
+    <transition name="confirm">
+        <div v-show="isshow">
+            confirm
+        </div>
+    </transition>
+</template>
 <script>
   const cpn = {
     template: "#mycpn",
@@ -51,10 +61,31 @@
       },
       hide() {
         this.isshow = false
-        console.log("hide")
+        // console.log("hide")
+        this.$emit("show-confirm")
       }
     }
+  }
 
+  const confirm = {
+    template: "#confirm",
+    props: {},
+    data() {
+      return {
+        // bbb: 145612
+        isshow: false
+      }
+    },
+    methods: {
+      show() {
+        this.isshow = true
+      },
+      hide() {
+        this.isshow = false
+        // 控制子组件的显示
+
+      }
+    }
   }
   const HelloVueApp = Vue.createApp({
     data() {
@@ -63,13 +94,18 @@
       }
     },
     components: {
-      cpn
+      cpn,
+      confirm
     },
     methods: {
       handleClick() {
         // 父组件调用子组件的方法
         // this.$refs.compRef.show()
         this.$refs.compRef.show()
+      },
+      showConfirm() {
+        console.log("fdsa")
+        this.$refs.confirmRef.show()
       }
     }
   }).mount("#hello-vue")
