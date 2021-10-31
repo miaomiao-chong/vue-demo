@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vue3</title>
+    <script src="./vue.js"></script>
+</head>
+<body>
+<div id="hello-vue" class="demo">
+    {{ message }}
+    <cpn></cpn>
+</div>
+
+<template id="mycpn">
+    <div>
+        我是一个组件
+    </div>
+</template>
+<script>
+  const cpn = {
+    template: "#mycpn",
+    props: {},
+    data() {
+      return {
+        bbb: 145612
+      }
+    }
+  }
+  const HelloVueApp = Vue.createApp({
+    data() {
+      return {
+        message: 'Hello Vue!!'
+      }
+    },
+    components: {
+      cpn
+    }
+  }).mount("#hello-vue")
+
+</script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vue3</title>
+    <script src="./vue.js"></script>
+</head>
+<body>
+<div id="hello-vue" class="box">
+    <div>我是父组件</div>
+    <div>我是父组件</div>
+    <div>我是父组件</div>
+    <div>我是父组件</div>
+    <div>我是父组件</div>
+    <div>我是父组件</div>
+    <button @click="handleClick">点我显示子组件</button>
+    <cpn ref="compRef"></cpn>
+</div>
+
+<template id="mycpn">
+    <transition name="list-fade">
+        <div class="cpnContainer" v-show="isshow" @click.stop="hide()">
+            <div class="inner-wrapper" @click.stop>
+                用到了transition
+                <div class="text">
+                    <div>我是inner-text</div>
+                    <div>我是inner-text</div>
+                    <div>我是inner-text</div>
+                    <div>我是inner-text</div>
+                    <div>我是inner-text</div>
+                </div>
+                <div class="close" @click="hide()">close</div>
+            </div>
+        </div>
+    </transition>
+
+</template>
+<script>
+  const cpn = {
+    template: "#mycpn",
+    props: {},
+    data() {
+      return {
+        // bbb: 145612
+        isshow: false
+      }
+    },
+    methods: {
+      show() {
+        this.isshow = true
+      },
+      hide() {
+        this.isshow = false
+        console.log("hide")
+      }
+    }
+
+  }
+  const HelloVueApp = Vue.createApp({
+    data() {
+      return {
+        message: 'Hello Vue!!'
+      }
+    },
+    components: {
+      cpn
+    },
+    methods: {
+      handleClick() {
+        // 父组件调用子组件的方法
+        // this.$refs.compRef.show()
+        this.$refs.compRef.show()
+      }
+    }
+  }).mount("#hello-vue")
+
+</script>
+</body>
+<style>
+    * {
+        font-size: 50px;
+    }
+    /*vue内置transition*/
+    .list-fade-enter-active, .list-fade-leave-active {
+        transition: opacity .3s;
+    }
+
+    .list-fade-enter-active .inner-wrapper, .list-fade-leave-active .inner-wrapper{
+        transition: all .3s;
+    }
+    .list-fade-enter-from, .list-fade-leave-to {
+        opacity: 0;
+    }
+    .list-fade-enter-from .inner-wrapper, .list-fade-leave-to  .inner-wrapper{
+        transform: translate3d(0, 100%, 0);
+    }
+
+
+    /*子组件样式*/
+    .cpnContainer {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, .3);
+    }
+
+    .inner-wrapper {
+        padding: 70px;
+        background-color: darkcyan;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .close {
+        position: absolute;
+        top: 50px;
+        right: 50px;
+    }
+</style>
+</html>
