@@ -1,49 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Vue3</title>
-    <script src="./vue.js"></script>
+  <meta charset="utf-8">
+  <title>Vue3</title>
+  <script src="./vue.js"></script>
 </head>
 <body>
-<div id="hello-vue" class="box" >
-    <div>我是父组件</div>
-    <div>我是父组件</div>
-    <div>我是父组件</div>
-    <div>我是父组件</div>
-    <div>我是父组件</div>
-    <div>我是父组件</div>
-    <button @click="handleClick" >点我显示子组件</button>
-    <cpn ref="compRef" @show-confirm="showConfirm"></cpn>
-    <confirm  ref="confirmRef"></confirm>
+<div id="hello-vue" class="box">
+  <div>我是父组件</div>
+  <div>我是父组件</div>
+  <div>我是父组件</div>
+  <div>我是父组件</div>
+  <div>我是父组件</div>
+  <div>我是父组件</div>
+  <button @click="handleClick">点我显示子组件</button>
+  <cpn ref="compRef" @show-confirm="showConfirm"></cpn>
+  <confirm ref="confirmRef" @confirm="handleConfirm" @cancel="handleCancel"></confirm>
 </div>
 <!--点击按钮后显示的那个组件-->
 <template id="mycpn">
-    <transition name="list-fade">
-        <div class="cpnContainer" v-show="isshow" @click.stop="hide()">
-            <div class="inner-wrapper" @click.stop>
-                用到了transition
-                <div class="text">
-                    <div>我是inner-text</div>
-                    <div>我是inner-text</div>
-                    <div>我是inner-text</div>
-                    <div>我是inner-text</div>
-                    <div>我是inner-text</div>
-                </div>
-                <div class="close" @click="hide()">close</div>
-            </div>
+  <transition name="list-fade">
+    <div class="cpnContainer" v-show="isshow" @click.stop="handleClose()">
+      <div class="inner-wrapper" @click.stop>
+        用到了transition
+        <div class="text">
+          <div>我是inner-text</div>
+          <div>我是inner-text</div>
+          <div>我是inner-text</div>
+          <div>我是inner-text</div>
+          <div>我是inner-text</div>
         </div>
-    </transition>
+        <div class="close" @click="handleClose()">close</div>
+      </div>
+    </div>
+  </transition>
 
 </template>
 
 <!--确认关闭confirm组件-->
 <template id="confirm">
-    <transition name="confirm">
-        <div v-show="isshow">
-            confirm
+  <transition name="confirm-fade">
+    <div v-show="isshow" class="confirm">
+      <div class="confirm-content">
+        <div style="width: 600px" class="confirm-content2">
+          <p>{{text}}</p>
+          <div class="btnContainer">
+            <button style="background-color: darkseagreen;margin-right: 40px" @click="confirm">{{confirmBtnText}}</button>
+            <button @click="cancel">{{cancelBtnText}}</button>
+          </div>
         </div>
-    </transition>
+      </div>
+    </div>
+  </transition>
 </template>
 <script>
   const cpn = {
@@ -60,16 +68,33 @@
         this.isshow = true
       },
       hide() {
+        // console.log("hide")
         this.isshow = false
+      },
+      handleClose() {
         // console.log("hide")
         this.$emit("show-confirm")
-      }
+      },
+
     }
   }
 
   const confirm = {
     template: "#confirm",
-    props: {},
+    props: {
+      text: {
+        type: String,
+        default: 'fdsafdasfdas'
+      },
+      confirmBtnText: {
+        type: String,
+        default: '确定'
+      },
+      cancelBtnText: {
+        type: String,
+        default: '取消'
+      }
+    },
     data() {
       return {
         // bbb: 145612
@@ -83,7 +108,15 @@
       hide() {
         this.isshow = false
         // 控制子组件的显示
-
+      },
+      // 点击按钮后向父组件派发事件
+      confirm() {
+        this.hide();
+        this.$emit("confirm")
+      },
+      cancel() {
+        this.hide()
+        this.$emit('cancel')
       }
     }
   }
@@ -106,6 +139,13 @@
       showConfirm() {
         console.log("fdsa")
         this.$refs.confirmRef.show()
+      },
+      // 点击取消或确定以后的逻辑
+      handleConfirm() {
+        this.$refs.compRef.hide()
+      },
+      handleCancel() {
+
       }
     }
   }).mount("#hello-vue")
@@ -116,18 +156,21 @@
     * {
         font-size: 50px;
     }
+
     /*vue内置transition*/
     .list-fade-enter-active, .list-fade-leave-active {
         transition: opacity .3s;
     }
 
-    .list-fade-enter-active .inner-wrapper, .list-fade-leave-active .inner-wrapper{
+    .list-fade-enter-active .inner-wrapper, .list-fade-leave-active .inner-wrapper {
         transition: all .3s;
     }
+
     .list-fade-enter-from, .list-fade-leave-to {
         opacity: 0;
     }
-    .list-fade-enter-from .inner-wrapper, .list-fade-leave-to  .inner-wrapper{
+
+    .list-fade-enter-from .inner-wrapper, .list-fade-leave-to .inner-wrapper {
         transform: translate3d(0, 100%, 0);
     }
 
@@ -156,5 +199,95 @@
         top: 50px;
         right: 50px;
     }
+
+    /*confirm组件样式*/
+    .confirm {
+
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.14);
+    }
+
+    .btnContainer {
+        padding: 0 70px;
+    }
+
+    .confirm-content p {
+        box-sizing: border-box;
+        padding-left: 40px;
+    }
+
+    .confirm-content {
+        border-radius: 8px;
+        box-shadow: 0px 0px 80px 3px rgba(0, 0, 0, 0.2);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        /*p标签的margin top影响到了父元素 bfc*/
+        /*overflow: hidden;*/
+        background-color: white;
+    }
+
+    .confirm-content button {
+        border: 1px solid cornflowerblue;
+        background-color: transparent;
+        padding: 25px 50px;
+        margin-bottom: 30px;
+        border-radius: 5px;
+    }
+    .confirm-fade-enter-active ,.confirm-fade-leave-active{
+        transition: all 5s;
+    }
+    .confirm-fade-enter-from ,.confirm-fade-leave-to{
+        opacity: 0;
+    }
+    .confirm-fade-enter-active .confirm-content2 {
+        animation: confirm-zoom-in 7s;
+        transform-origin: center;
+    }
+    .confirm-fade-leave-active .confirm-content2 {
+        animation: confirm-zoom-out 3s;
+        transform-origin: center;
+    }
+
+    @keyframes confirm-zoom-in {
+        0% {
+            transform-origin: center;
+            transform: scale(0);
+        }
+        60% {
+            transform-origin: center;
+            transform: scale(1.7);
+        }
+        80% {
+            transform-origin: center;
+            transform: scale(2);
+        }
+        90% {
+            transform-origin: center;
+            transform: scale(1.6);
+        }
+        100% {
+            transform-origin: center;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes confirm-zoom-out {
+        0% {
+            transform: scale(1);
+        }
+        30% {
+            transform: scale(0.4);
+        }
+        100% {
+            transform: scale(0);
+        }
+    }
+
 </style>
 </html>
