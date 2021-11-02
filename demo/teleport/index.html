@@ -15,7 +15,7 @@
   <div>我是父组件</div>
   <button @click="handleClick">点我显示子组件</button>
   <cpn ref="compRef" @show-confirm="showConfirm"></cpn>
-  <confirm ref="confirmRef" @confirm="handleConfirm" @cancel="handleCancel"></confirm>
+  <confirm ref="confirmRef" @confirm="handleConfirm" @cancel="handleCancel" text="确定退出吗"></confirm>
 </div>
 <!--点击按钮后显示的那个组件-->
 <template id="mycpn">
@@ -41,8 +41,8 @@
 <template id="confirm">
   <transition name="confirm-fade">
     <div v-show="isshow" class="confirm">
-      <div class="confirm-content">
-        <div style="width: 600px" class="confirm-content2">
+      <div class="confirm-wrapper">
+        <div class="confirm-content">
           <p>{{text}}</p>
           <div class="btnContainer">
             <button style="background-color: darkseagreen;margin-right: 40px" @click="confirm">{{confirmBtnText}}</button>
@@ -202,7 +202,6 @@
 
     /*confirm组件样式*/
     .confirm {
-
         position: fixed;
         top: 0;
         bottom: 0;
@@ -214,23 +213,36 @@
     .btnContainer {
         padding: 0 70px;
     }
-
-    .confirm-content p {
-        box-sizing: border-box;
-        padding-left: 40px;
-    }
-
-    .confirm-content {
-        border-radius: 8px;
-        box-shadow: 0px 0px 80px 3px rgba(0, 0, 0, 0.2);
+    .confirm-wrapper{
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        /*p标签的margin top影响到了父元素 bfc*/
-        /*overflow: hidden;*/
-        background-color: white;
+        z-index: 999;
+        box-shadow: 0px 0px 80px 3px rgba(0, 0, 0, 0.2);
     }
+    .confirm-content{
+        overflow: hidden;
+        width: 600px;
+        border-radius: 13px;
+        background: white
+    }
+    .confirm-content p {
+        display: block;
+        padding-left: 40px;
+    }
+
+    /*.confirm-content {*/
+    /*    border-radius: 8px;*/
+    /*    box-shadow: 0px 0px 80px 3px rgba(0, 0, 0, 0.2);*/
+    /*    position: absolute;*/
+    /*    top: 50%;*/
+    /*    left: 50%;*/
+    /*    transform: translate(-50%, -50%);*/
+    /*    !*p标签的margin top影响到了父元素 bfc*!*/
+    /*    !*overflow: hidden;*!*/
+    /*    background-color: white;*/
+    /*}*/
 
     .confirm-content button {
         border: 1px solid cornflowerblue;
@@ -240,43 +252,32 @@
         border-radius: 5px;
     }
     .confirm-fade-enter-active ,.confirm-fade-leave-active{
-        transition: all 5s;
+        transition: all .3s;
     }
     .confirm-fade-enter-from ,.confirm-fade-leave-to{
         opacity: 0;
     }
-    .confirm-fade-enter-active .confirm-content2 {
-        animation: confirm-zoom-in 7s;
+    .confirm-fade-enter-active .confirm-content {
+        animation: confirm-zoom-in .3s;
         transform-origin: center;
     }
-    .confirm-fade-leave-active .confirm-content2 {
-        animation: confirm-zoom-out 3s;
+    .confirm-fade-leave-active .confirm-content {
+        animation: confirm-zoom-out .3s;
         transform-origin: center;
     }
 
     @keyframes confirm-zoom-in {
         0% {
-            transform-origin: center;
+
             transform: scale(0);
         }
         60% {
-            transform-origin: center;
-            transform: scale(1.7);
-        }
-        80% {
-            transform-origin: center;
-            transform: scale(2);
-        }
-        90% {
-            transform-origin: center;
-            transform: scale(1.6);
+            transform: scale(1.1);
         }
         100% {
-            transform-origin: center;
             transform: scale(1);
         }
     }
-
     @keyframes confirm-zoom-out {
         0% {
             transform: scale(1);
