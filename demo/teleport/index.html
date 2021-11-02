@@ -19,39 +19,45 @@
 </div>
 <!--点击按钮后显示的那个组件-->
 <template id="mycpn">
-  <transition name="list-fade">
-    <div class="cpnContainer" v-show="isshow" @click.stop="handleClose()">
-      <div class="inner-wrapper" @click.stop>
-        用到了transition
-        <div class="text">
-          <div>我是inner-text</div>
-          <div>我是inner-text</div>
-          <div>我是inner-text</div>
-          <div>我是inner-text</div>
-          <div>我是inner-text</div>
+  <teleport to="body">
+    <transition name="list-fade">
+      <div class="cpnContainer" v-show="isshow" @click.stop="handleClose()">
+        <div class="inner-wrapper" @click.stop>
+          用到了transition
+          <div class="text">
+            <div>我是inner-text</div>
+            <div>我是inner-text</div>
+            <div>我是inner-text</div>
+            <div>我是inner-text</div>
+            <div>我是inner-text</div>
+          </div>
+          <div class="close" @click="handleClose()">close</div>
         </div>
-        <div class="close" @click="handleClose()">close</div>
       </div>
-    </div>
-  </transition>
+    </transition>
+  </teleport>
+
 
 </template>
 
 <!--确认关闭confirm组件-->
 <template id="confirm">
-  <transition name="confirm-fade">
-    <div v-show="isshow" class="confirm">
-      <div class="confirm-wrapper">
-        <div class="confirm-content">
-          <p>{{text}}</p>
-          <div class="btnContainer">
-            <button style="background-color: darkseagreen;margin-right: 40px" @click="confirm">{{confirmBtnText}}</button>
-            <button @click="cancel">{{cancelBtnText}}</button>
+  <teleport to="body">
+    <transition name="confirm-fade">
+      <div v-show="isshow" class="confirm">
+        <div class="confirm-wrapper">
+          <div class="confirm-content">
+            <p>{{text}}</p>
+            <div class="btnContainer">
+              <button style="background-color: darkseagreen;margin-right: 40px" @click="confirm">{{confirmBtnText}}</button>
+              <button @click="cancel">{{cancelBtnText}}</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </transition>
+    </transition>
+  </teleport>
+
 </template>
 <script>
   const cpn = {
