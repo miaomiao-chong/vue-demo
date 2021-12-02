@@ -21,15 +21,15 @@ export default {
       default: 5,
     },
     // 每interval秒滚动多少px
-    step:{
-      type:Number,
-      default: 1
+    step: {
+      type: Number,
+      default: 1,
     },
     // 每多少毫秒滚动一次
-    interval:{
-      type:Number,
-      default:1
-    }
+    interval: {
+      type: Number,
+      default: 1,
+    },
   },
   data() {
     return {
@@ -39,10 +39,9 @@ export default {
       cpOffset: 0,
       // 垂直居中要用到
       containerHeight: "",
-      containerWidth:0,
+      containerWidth: 0,
       // 内容宽度
-      contentWidth:0
-
+      contentWidth: 0,
     };
   },
   mounted() {
@@ -62,34 +61,75 @@ export default {
       console.log(containerHeight);
       this.containerHeight = containerHeight;
       this.containerWidth = containerWidth;
-      this.contentWidth=contentWidth
-      this.offset = new Number(this.startWidth);
-      // this.run()
+      this.contentWidth = contentWidth;
+      if (this.containerWidth < this.contentWidth) {
+        this.isOverflow = true;
+        const startWidth = new Number(this.startWidth);
+        this.offset = -(this.containerWidth - startWidth);
+        this.run();
+      } else {
+        this.isOverflow = false;
+      }
     });
   },
   computed: {
     containerStyle() {
       return {};
     },
-    contentStyle() {
-      return {
-        lineHeight: this.containerHeight + "px",
-        transform: `translate3d(${this.offset}px,0,0)`,
-      };
-    },
     // 初始化布局
+    contentStyle() {
+      if (!this.isOverflow) {
+        return {
+          textAlign: "center",
+          lineHeight: this.containerHeight + "px",
+        };
+      } else {
+        // console.log(`translate3d(${this.offset}px,0,0)`);
+        return {
+          transform: `translate3d(${this.offset}px,0,0)`,
+          left: this.containerWidth + "px",
+          lineHeight: this.containerHeight + "px",
+        };
+      }
+    },
     contentcpStyle() {
+      if (!this.isOverflow) {
+        return;
+      }
       return {
+        left: this.containerWidth + "px",
+        top: -this.containerHeight + "px",
         lineHeight: this.containerHeight + "px",
-        transform: `translate3d(${this.containerWidth}px,-${this.containerHeight}px,0)`,
+        transform: `translate3d(${this.cpOffset}px,0,0)`,
       };
     },
-    scrollFirstDistance(){
-      return this.contentWidth-this.containerWidth+this.endWidth
+    // 第二个能动需要移动的距离
+    openCpBox() {
+      if (!this.isOverflow) {
+        return;
+      }
+      return this.contentWidth + this.endWidth;
     },
-    scrollSecondDistance(){
+    // 第二个能动的判断
+    isOpenCpbox() {
+      if (!this.isOverflow) {
+        return;
+      }
+      return this.offset <= -this.openCpBox;
+    },
+    // 走完一轮的路程
+    totalDistance() {
+      if (!this.isOverflow) {
+        return;
+      }
+      return this.contentWidth + this.containerWidth;
+    },
+    scrollSecondDistance() {
+      if (!this.isOverflow) {
+        return;
+      }
       // return this.contentWidth-this.endWidth
-    }
+    },
   },
   methods: {
     run() {
@@ -113,16 +153,22 @@ export default {
       //     }
       //   }
       // }, 20);
-   
       let interval = setInterval(() => {
-        this.offset = this.offset-this.step
-        let offsetVal =this.offset
-        if(offsetVal<=-this.scrollFirstDistance){
-          // clearInterval(interval)
-          this.cpOffset = this.cpOffset-this.step
+        this.offset = this.offset - this.step;
+        let offsetVal = this.offset;
+        if (this.isOpenCpbox) {
+          this.cpOffset = this.cpOffset - this.step;
+        }
+        // console.log(this.cpOffset, "   ", this.totalDistance);
+        if (this.cpOffset <= -this.totalDistance) {
+          // console.log(123456);
+          clearInterval(interval);
+          this.offset = -(this.containerWidth - this.startWidth);
+          this.cpOffset = 0;
+          this.run();
         }
       }, this.interval);
-   },
+    },
   },
   //生命周期 - 创建完成（访问当前this实例）
   created() {},
@@ -134,9 +180,11 @@ export default {
   height: 100%;
   border: 1px solid #333;
   text-align: center;
+  overflow: hidden;
 }
 .content {
   position: relative;
+
   white-space: nowrap;
   display: inline-block;
 }
