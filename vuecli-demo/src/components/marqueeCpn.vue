@@ -2,7 +2,7 @@
 <template>
   <div class="container" :style="containerStyle">
     <div class="content" :style="contentStyle">{{ word }}</div>
-    <div class="contentcp" :style="contentcpStyle">{{ word }}</div>
+    <div v-if="isOverflow" class="contentcp" :style="contentcpStyle">{{ word }}</div>
   </div>
 </template>
 
@@ -33,17 +33,18 @@ export default {
   },
   data() {
     return {
+      // 字的长度是否超出父盒子
       isOverflow: false,
       // 偏移量
       offset: 0,
+      // 拷贝的那一份的文本的偏移量
       cpOffset: 0,
       // 垂直居中要用到
       containerHeight: "",
+      // 盒子宽度
       containerWidth: 0,
       // 内容宽度
       contentWidth: 0,
-      // 可以进入container的元素
-      isStart: false,
     };
   },
   mounted() {
@@ -80,7 +81,6 @@ export default {
     },
     // 初始化布局
     contentStyle() {
-      // 没有超出范围
       if (!this.isOverflow) {
         return {
           textAlign: "center",
@@ -113,7 +113,13 @@ export default {
       }
       return this.contentWidth + this.endWidth;
     },
-
+    // 第二个能动的判断
+    isOpenCpbox() {
+      if (!this.isOverflow) {
+        return;
+      }
+      return this.offset <= -this.openCpBox;
+    },
     // 走完一轮的路程
     totalDistance() {
       if (!this.isOverflow) {
@@ -121,79 +127,43 @@ export default {
       }
       return this.contentWidth + this.containerWidth;
     },
-    // 根据距离右边的距离判断另一个元素是否可以进入
+
+    
     contentRightToContainerRight() {
       // 第二个开始进入container逻辑
-      // console.log(this.offset + this.openCpBox);
-      if (this.offset + this.openCpBox < this.step) {
-        console.log("第二个要开始进入container逻辑");
-        this.isStart = true;
-        // this.cpOffset = this.cpOffset - this.step;
-        return 1;
+      if (Math.abs(this.offset - this.openCpBox) <= this.step) {
+        console.log("第二个开始进入container逻辑");
+        return true;
       }
-      // 第一个开始进入container逻辑
-      if (this.cpOffset + this.openCpBox < this.step) {
-        console.log("第一个要开始进入container逻辑");
-        // this.offset = this.offset - this.step;
-        return 2;
-      }
-      return -1;
+      return false;
     },
     isToEnd() {
-      // console.log(Math.abs(-this.offset - this.totalDistance));
-      if (this.offset + this.totalDistance < this.step) {
+      console.log(Math.abs(-this.offset-this.totalDistance));
+      if (Math.abs(-this.offset-this.totalDistance) <= this.step) {
         console.log("第一个滚动到最后了");
-        this.offset = 0;
-        return 1;
-      }
-      if (this.cpOffset + this.totalDistance <= this.step) {
-        console.log("第二个滚动到最后了");
-        this.cpOffset = 0;
-        return;
+        return true;
       }
       return false;
     },
   },
   methods: {
     run() {
-      run1flag=false
-      run2flag=false
       let interval = setInterval(() => {
-      if (!this.isStart) {
-          this.offset = this.offset - this.step;
-        }
-        const contentRightToContainerRight = this.contentRightToContainerRight;
-        if (contentRightToContainerRight == 1) {
+        this.offset = this.offset - this.step;
+        let offsetVal = this.offset;
+        // 达到了第二个能动的条件
+        if (this.isOpenCpbox) {
           this.cpOffset = this.cpOffset - this.step;
-        } else if (contentRightToContainerRight == 2) {
-          this.offset = this.offset - this.step;
         }
-
-        const isToEnd = this.isToEnd;
-        if (isToEnd == 1) {
-          
+        // console.log(this.cpOffset, "   ", this.totalDistance);
+        // 如果第一个到达了末尾 那么重新开定时器
+        if (this.isToEnd) {
+          // console.log(123456);
+          clearInterval(interval);
+          this.offset = -(this.containerWidth - this.startWidth);
+          this.cpOffset = 0;
+          this.run();
         }
-
-        // this.isStart=true
-        // this.contentRightToContainerRight
-        // this.isToEnd
-
-        // this.offset = this.offset - this.step;
-        // let offsetVal = this.offset;
-        // if (this.isOpenCpbox) {
-        //   this.cpOffset = this.cpOffset - this.step;
-        // }
-        // if (this.contentRightToContainerRight) {
-        //   console.log("true");
-        // }
-        // // console.log(this.cpOffset, "   ", this.totalDistance);
-        // if (this.isToEnd) {
-        //   // console.log(123456);
-        //   clearInterval(interval);
-        //   this.offset = -(this.containerWidth - this.startWidth);
-        //   this.cpOffset = 0;
-        //   this.run();
-        // }
       }, this.interval);
     },
   },
@@ -207,7 +177,7 @@ export default {
   height: 100%;
   border: 1px solid #333;
   text-align: center;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 .content {
   position: relative;
