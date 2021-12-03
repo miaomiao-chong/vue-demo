@@ -2,7 +2,9 @@
 <template>
   <div class="container" :style="containerStyle">
     <div class="content" :style="contentStyle">{{ word }}</div>
-    <div v-if="isOverflow" class="contentcp" :style="contentcpStyle">{{ word }}</div>
+    <div v-if="isOverflow" class="contentcp" :style="contentcpStyle">
+      {{ word }}
+    </div>
   </div>
 </template>
 
@@ -18,7 +20,7 @@ export default {
     // 距离右边多少距离开始循环下一跳
     endWidth: {
       type: Number,
-      default: 5,
+      default: 30,
     },
     // 每interval秒滚动多少px
     step: {
@@ -49,7 +51,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      console.log(document.getElementsByClassName("container"));
+      // console.log(document.getElementsByClassName("container"));
       const containerWidth =
         document.getElementsByClassName("container")[0].clientWidth;
       const contentWidth =
@@ -121,26 +123,33 @@ export default {
       return this.offset <= -this.openCpBox;
     },
     // 走完一轮的路程
-    totalDistance() {
-      if (!this.isOverflow) {
-        return;
-      }
-      return this.contentWidth + this.containerWidth;
-    },
+    // totalDistance() {
+    //   if (!this.isOverflow) {
+    //     return 0;
+    //   }
+    //   if (this.cpOffset!=0) {
+    //     // console.log(-this.cpOffset - (this.contentWidth - this.startWidth));
+    //     return (
+    //       -this.cpOffset - (this.contentWidth - this.startWidth) < this.step
+    //     );
+    //   }
+    // },
 
-    
-    contentRightToContainerRight() {
-      // 第二个开始进入container逻辑
-      if (Math.abs(this.offset - this.openCpBox) <= this.step) {
-        console.log("第二个开始进入container逻辑");
-        return true;
-      }
-      return false;
-    },
+    // contentRightToContainerRight() {
+    //   // 第二个开始进入container逻辑
+    //   if (Math.abs(this.offset - this.openCpBox) <= this.step) {
+    //     console.log("第二个开始进入container逻辑");
+    //     return true;
+    //   }
+    //   return false;
+    // },
     isToEnd() {
-      console.log(Math.abs(-this.offset-this.totalDistance));
-      if (Math.abs(-this.offset-this.totalDistance) <= this.step) {
-        console.log("第一个滚动到最后了");
+      // console.log(Math.abs(-this.offset-this.totalDistance));
+      // console.log(Math.abs(-this.cpOffset - (this.contentWidth - this.startWidth)));
+      // if (Math.abs(-this.cpOffset - (this.contentWidth - this.startWidth)) < this.step && this.cpOffset!=0) {
+      //   return true;
+      // }
+      if (this.containerWidth-this.startWidth+this.cpOffset<this.step) {
         return true;
       }
       return false;
@@ -156,9 +165,8 @@ export default {
           this.cpOffset = this.cpOffset - this.step;
         }
         // console.log(this.cpOffset, "   ", this.totalDistance);
-        // 如果第一个到达了末尾 那么重新开定时器
+        // 如果第二个到达了末尾 那么重新开定时器
         if (this.isToEnd) {
-          // console.log(123456);
           clearInterval(interval);
           this.offset = -(this.containerWidth - this.startWidth);
           this.cpOffset = 0;
