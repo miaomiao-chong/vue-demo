@@ -9,6 +9,7 @@
 </template>
 
 <script>
+
 export default {
   props: {
     word: String,
@@ -20,19 +21,20 @@ export default {
     // 距离右边多少距离开始循环下一跳
     endWidth: {
       type: Number,
-      default: 30,
+      default: 100,
     },
     // 每interval秒滚动多少px
     step: {
       type: Number,
-      default: 1,
+      default: 5,
     },
     // 每多少毫秒滚动一次
     interval: {
       type: Number,
-      default: 1,
+      default: 100,
     },
   },
+  
   data() {
     return {
       // 字的长度是否超出父盒子
@@ -47,9 +49,11 @@ export default {
       containerWidth: 0,
       // 内容宽度
       contentWidth: 0,
+      mysetInterval:null
     };
   },
   mounted() {
+    console.log("mounted");
     this.$nextTick(() => {
       // console.log(document.getElementsByClassName("container"));
       const containerWidth =
@@ -108,7 +112,7 @@ export default {
         transform: `translate3d(${this.cpOffset}px,0,0)`,
       };
     },
-    // 第二个能动需要移动的距离
+    // 第二个能进入container需要移动的距离
     openCpBox() {
       if (!this.isOverflow) {
         return;
@@ -143,12 +147,8 @@ export default {
     //   }
     //   return false;
     // },
+    // 根据第二个文字移动的距离判断时候第一轮已经循环完
     isToEnd() {
-      // console.log(Math.abs(-this.offset-this.totalDistance));
-      // console.log(Math.abs(-this.cpOffset - (this.contentWidth - this.startWidth)));
-      // if (Math.abs(-this.cpOffset - (this.contentWidth - this.startWidth)) < this.step && this.cpOffset!=0) {
-      //   return true;
-      // }
       if (this.containerWidth-this.startWidth+this.cpOffset<this.step) {
         return true;
       }
@@ -157,7 +157,10 @@ export default {
   },
   methods: {
     run() {
-      let interval = setInterval(() => {
+      // if(interval){
+      //   clearInterval(interval)
+      // }
+    this.mysetInterval = setInterval(() => {
         this.offset = this.offset - this.step;
         let offsetVal = this.offset;
         // 达到了第二个能动的条件
@@ -167,7 +170,7 @@ export default {
         // console.log(this.cpOffset, "   ", this.totalDistance);
         // 如果第二个到达了末尾 那么重新开定时器
         if (this.isToEnd) {
-          clearInterval(interval);
+          clearInterval(this.mysetInterval);
           this.offset = -(this.containerWidth - this.startWidth);
           this.cpOffset = 0;
           this.run();
@@ -178,6 +181,9 @@ export default {
   //生命周期 - 创建完成（访问当前this实例）
   created() {},
   //生命周期 - 挂载完成（访问DOM元素）
+  unmounted() {
+    clearInterval(this.mysetInterval)
+  }
 };
 </script>
 <style>
@@ -185,7 +191,7 @@ export default {
   height: 100%;
   border: 1px solid #333;
   text-align: center;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 .content {
   position: relative;
