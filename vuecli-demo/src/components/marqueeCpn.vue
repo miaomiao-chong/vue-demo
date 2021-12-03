@@ -63,7 +63,7 @@ export default {
       } else {
         this.isOverflow = true;
       }
-      console.log(containerHeight);
+      // console.log(containerHeight);
       this.containerHeight = containerHeight;
       this.containerWidth = containerWidth;
       this.contentWidth = contentWidth;

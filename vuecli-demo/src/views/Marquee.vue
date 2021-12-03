@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="root">
-      <marquee :word=word3 :endWidth="30" :startWidth="20" :interval="100" :step="5" style="margin:0 auto"></marquee>
+      <marquee :word=word2 :endWidth="50" :startWidth="20" :interval="100" :step="5" style="margin:0 auto"></marquee>
   </div>
 </template>
 
