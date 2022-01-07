@@ -2,18 +2,17 @@
 <template>
   <div class="root">
       <marquee :word=word3  :interval="100" :step="4" :endWidth="20" style="margin:0 auto"></marquee>
-       <marquee2 :word=word3  :interval="100" :step="4" :endWidth="20" style="margin:0 auto"></marquee2>
+       <marquee :word=word3  :interval="100" :step="4" :endWidth="20" style="margin:0 auto"></marquee>
   </div>
 </template>
 
 <script>
 import Marquee from '../components/marqueeCpn.vue';
-import Marquee2 from '../components/marqueeCpn.vue';
+
 
 export default {
   components:{
-    Marquee,
-    Marquee2
+    Marquee
   },
   data() {
     return {

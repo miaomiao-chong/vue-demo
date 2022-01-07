@@ -1,0 +1,31 @@
+{
+  "name": "",
+  "isOrdered": true,
+  "folders": {
+    "base": {
+      "name": "base",
+      "isOrdered": true,
+      "folders": {},
+      "files": {}
+    },
+    "demo": {
+      "name": "demo",
+      "isOrdered": true,
+      "folders": {},
+      "files": {}
+    },
+    "js": {
+      "name": "js",
+      "isOrdered": true,
+      "folders": {},
+      "files": {}
+    },
+    "vuecli-demo": {
+      "name": "vuecli-demo",
+      "isOrdered": true,
+      "folders": {},
+      "files": {}
+    }
+  },
+  "files": {}
+}

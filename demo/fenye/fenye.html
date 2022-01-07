@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <div id="hello-vue" class="demo">
+    <input v-model="inputData" type="text" />
+    <ul class="songContainer" ref="rootRef">
+      <li v-for="(item, index) in songs" :key="index">
+        {{item.songName}}--{{item.singer}}
+      </li>
+    </ul>
+    <!-- <button @click="page++" v-if="hasMore">点我page+1</button> -->
+    <div style="width: 100%;"><img src="https://img-blog.csdnimg.cn/fc901b1ca5974221b33e0d4b60eb64d2.gif" width="30" height="30" style="display: block; margin: 0 auto;"></div>
+    <div v-if="!hasMore&&inputData">已经加载完了</div>
+  </div>
+
+  <script type="module" >
+
+
+    const HelloVueApp = new Vue({
+      el: '#hello-vue',
+      data() {
+        return {
+          inputData: '',
+          songs: [],
+          hasMore: true,
+          songCount: 0,
+          // offset: 0,
+          limit: 50,
+          page: 0
+        }
+      },
+      computed: {
+
+      },
+      created() {
+        // 防抖
+        this.$watch('inputData', this.debounce(async (val) => {
+          this.initSearch()
+          this.inputData = val
+          const data =  await this.searchFun()
+          this.songs = data.songs,
+          this.hasMore = data.hasMore
+        }))
+      },
+      mounted() {
+     
+
+
+      },
+      watch: {
+        // page变化的时候 请求下一页
+        async page(val) {
+          // 请求到数据后拼接到songs后面
+          const data = await this.searchFun()
+          this.songs = this.songs.concat(data.songs)
+          this.hasMore = data.hasMore
+        },
+        hasMore(val) {
+          if(!val){
+            console.log("到最底部了");
+          }
+        }
+      },
+      methods: {
+        // 防抖函数
+        debounce(fn, delay = 300) {
+          let timer = null
+          return function () {
+            if (timer) {
+              clearTimeout(timer)
+            }
+            timer = setTimeout(() => {
+              fn.apply(this, arguments)
+              timer = null
+            }, delay)
+          }
+        },
+        // 每次搜索page songs之类的信息需要清除
+        initSearch() {
+          this.songs = [],
+            this.hasMore = true,
+            this.songCount = 0,
+            this.offset = 0,
+            this.page = 0
+        },
+        // 向后端发送请求方法，返回请求到的数据
+        async searchFun() {
+          const result = await axios.get('http://localhost:8001/getSearchRes',
+            {
+              params: {
+                keywords: this.inputData,
+                limit: this.limit,
+                offset: this.page * this.limit
+              }
+            })
+          console.log(result);
+          return result.data
+        }
+
+      },
+
+    })
+  </script>
+</body>
+
+</html>

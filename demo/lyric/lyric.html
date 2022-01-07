@@ -55,8 +55,9 @@
 
 <script src="../../js/vue.js"></script>
 <script type="module">
+  
   import Lyric from "./lyricParser.js"
-
+ 
   let audioEl;
   let lyricEl;
   let lyricListEl = null
@@ -78,7 +79,10 @@
       }
     },
     mounted() {
+        this.$nextTick(()=>{
+          
 
+        })
     },
     created() {
       this.touch = {}

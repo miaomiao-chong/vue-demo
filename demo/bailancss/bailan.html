@@ -1,0 +1,853 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>我用代码摆烂了你的AE作业</title>
+  <style>
+    #section {
+      width: 1080px;
+      max-width: 1080p;
+      max-height: 720px;
+      margin: 300px auto;
+      text-align: center;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      float: left;
+      text-align: center;
+    }
+
+    .section-1 {
+      width: 750px;
+      margin: 0 auto;
+    }
+
+    .section-1 .canvas-wrapper {
+      margin-right: 10px;
+    }
+
+    .section-1 .fu-1 {
+      animation-name: ani-fu-1;
+      animation-duration: 1s;
+      animation-timing-function: ease;
+      animation-fill-mode: forwards;
+      /* animation-iteration-count: infinite; */
+    }
+
+    .section-1 .fu-2 {
+      animation-name: ani-fu-2;
+      animation-delay: 1s;
+      animation-duration: 0.5s;
+      /* transition: all 2s; */
+      animation-fill-mode: forwards;
+    }
+
+    .section-1 .fu-3 {
+      animation-name: ani-fu-3;
+      /* animation-delay: 1s; */
+      animation-duration: 1s;
+      animation-fill-mode: forwards;
+      z-index: -1;
+    }
+
+    @keyframes ani-fu-1 {
+      0% {
+        opacity: 0;
+      }
+
+      30% {
+        transform: scale(1);
+      }
+
+      90% {
+        left: 0;
+      }
+
+      100% {
+        left: 250px
+      }
+    }
+
+    @keyframes ani-fu-2 {
+      50% {
+        transform: scale(1.5);
+      }
+
+      100% {
+        transform: scale(2.5);
+      }
+    }
+
+    @keyframes ani-fu-3 {
+      0% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1);
+      }
+
+      90% {
+        right: 0;
+      }
+
+      100% {
+        right: 250px
+      }
+    }
+
+    /* 场景2 两福展示 */
+    .section-2 {
+      width: 440px;
+      margin: 0 auto;
+    }
+
+    .section-2 .canvas-wrapper {
+      margin-right: -20px;
+      margin-left: -20px;
+    }
+
+    /* 场景3 单福旋转 */
+    .section-3 {
+      width: 240px;
+      margin: 0 auto;
+    }
+
+    .section-3 .fu-1 {
+      animation-name: ani3-fu-1;
+      animation-timing-function: 1s;
+      animation-delay: .5s;
+      animation-duration: 5s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani3-fu-1 {
+      0% {
+        transform: scale(1.5);
+      }
+
+      5% {
+        transform: rotate(-180deg);
+      }
+
+      15% {
+        transform: rotate(-180deg);
+      }
+
+      100% {
+        transform: rotate(3600deg);
+      }
+    }
+
+    /* 场景4 两福旋转 */
+    .section-4 {
+      width: 560px;
+      margin: 0 auto;
+    }
+
+    .section-4 .canvas-wrapper {
+      margin-right: 20px;
+      margin-left: 20px;
+    }
+
+    .section-4 .canvas-wrapper {
+      animation-name: ani4-fu;
+      animation-timing-function: linear;
+      animation-duration: 5s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani4-fu {
+      from {
+        transform: rotate(10deg);
+      }
+
+      to {
+        transform: rotate(7200deg);
+      }
+    }
+
+    /* 场景5 放鞭炮*/
+    .section-5 .clear:after {
+      clear: both;
+      content: " ";
+      display: block;
+      height: 0;
+      overflow: hidden;
+      visibility: hidden;
+    }
+
+    .section-5 .bomb-2 {
+      margin-top: 100px;
+      margin-right: -150px;
+    }
+
+    .canvas-wrapper.cover {
+      width: 200px;
+      height: 330px;
+      background-color: white;
+    }
+
+    .canvas-wrapper.cover-1 {
+      animation-name: ani5-cover1;
+      animation-timing-function: linear;
+      animation-duration: 1s;
+      animation-fill-mode: forwards;
+    }
+
+    .canvas-wrapper.cover-2 {
+      margin-left: 80px;
+      animation-name: ani5-cover2;
+      animation-delay: 1s;
+      animation-timing-function: linear;
+      animation-duration: 1s;
+      animation-fill-mode: forwards;
+    }
+
+    .canvas-wrapper.cover-3 {
+      animation-name: ani5-cover3;
+      animation-delay: .4s;
+      animation-timing-function: linear;
+      animation-duration: 1s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani5-cover1 {
+      0% {
+        transform: translateY(0px);
+      }
+
+      100% {
+        transform: translateY(-430px);
+      }
+    }
+
+    @keyframes ani5-cover2 {
+      0% {
+        transform: translateY(0px);
+      }
+
+      100% {
+        transform: translateY(-330px);
+      }
+    }
+
+    @keyframes ani5-cover3 {
+      0% {
+        transform: translateY(0px);
+      }
+
+      100% {
+        transform: translateY(-350px);
+      }
+    }
+
+    .section-6 .lantern-1 {
+      animation-name: ani6-lantern1;
+      transform-origin: 50% 30%;
+      animation-timing-function: linear;
+      animation-duration: 10s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani6-lantern1 {
+      0% {
+        transform: translateX(-150px);
+      }
+
+      20% {
+        transform: translateX(800px);
+      }
+
+      30% {
+        /* 旋转同时移动 */
+        transform: translateX(-150px) rotate(1800deg);
+      }
+
+      30.01% {
+        transform: translateX(1200px);
+      }
+
+      50% {
+        transform: translateX(150px);
+      }
+
+      60% {
+        /* 旋转同时移动 */
+        transform: translateX(1200px) rotate(1800deg);
+      }
+
+      60.01% {
+        transform: translateX(1200px);
+      }
+
+      61% {
+        transform: translateX(500px);
+      }
+
+      70% {
+        transform: translateX(520px) scale(2);
+      }
+
+      75% {
+        transform: translateX(500px) scale(2);
+      }
+
+      80% {
+        transform: translateX(490px) scale(4);
+      }
+
+      85% {
+        transform: translateX(490px) scale(2);
+      }
+
+      88% {
+        transform: translateX(490px) scale(2);
+      }
+
+      90% {
+        transform: translateX(490px) scale(4);
+      }
+
+      100% {
+        transform: translate(-350px, -100px);
+      }
+    }
+
+    /* 场景7 旋转福 */
+    .happy-new-year {
+      width: 300px;
+      height: 240px;
+      font: 80px sans-serif;
+      color: red;
+      position: absolute;
+      right: 0;
+    }
+
+    .section-7 .fu-1 {
+      animation-name: ani7-fu1;
+      animation-timing-function: linear;
+      animation-duration: 14s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani7-fu1 {
+      0% {}
+
+      15% {
+        transform: translate(220px, -150px) rotate(720deg)
+      }
+
+      35% {
+        transform: translate(520px, -220px) rotate(3600deg)
+      }
+
+      60% {
+        transform: translate(820px, 150px) rotate(5400deg)
+      }
+
+      80% {
+        transform: translate(420px, 350px) rotate(7200deg)
+      }
+
+      90% {
+        transform: translate(-100px, -100px) rotate(3600deg)
+      }
+
+      95% {
+        transform: translate(0px, -100px) rotate(1800deg) scale(1)
+      }
+
+      100% {
+        transform: translate(100px, -120px) rotate(0) scale(0)
+      }
+    }
+
+    .section-7 .fu-2 {
+      animation-name: ani7-fu2;
+      animation-timing-function: linear;
+      animation-duration: 10s;
+      animation-fill-mode: forwards;
+    }
+
+    /* 顶部左到右 */
+    @keyframes ani7-fu2 {
+      0% {
+        transform: translate(-550px, -250px) scale(.7);
+      }
+
+      10% {
+        transform: translate(-550px, -250px) scale(.7);
+      }
+
+      99% {
+        opacity: 100;
+        transform: translate(1000px, -250px) scale(.7);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(1000px, -250px) scale(.7);
+      }
+    }
+
+    /* 中部 右到左旋转*/
+    .section-7 .fu-3 {
+      animation-name: ani7-fu3;
+      animation-timing-function: linear;
+      animation-duration: 15s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani7-fu3 {
+      0% {
+        transform: translateX(580px);
+      }
+
+      10% {
+        transform: translateX(580px);
+      }
+
+      80% {
+        opacity: 100;
+        transform: translateX(-580px) rotate(1800deg);
+      }
+
+      80.1% {
+        opacity: 0;
+        transform: translateX(-580px);
+      }
+
+      80.2% {
+        opacity: 0;
+        transform: translateX(0px);
+      }
+
+      80.3% {
+        opacity: 100;
+      }
+
+      90% {
+        transform: scale(1.5);
+      }
+
+      100% {
+        transform: scale(2.5);
+      }
+    }
+
+    .section-7 .fu-4 {
+      animation-name: ani7-fu4;
+      animation-timing-function: linear;
+      animation-duration: 6s;
+      animation-fill-mode: forwards;
+    }
+
+    /* 底部右到左旋转 */
+    @keyframes ani7-fu4 {
+      0% {
+        transform: translate(380px, 350px);
+      }
+
+      100% {
+        transform: translate(-1080px, 350px) rotate(3600deg);
+      }
+    }
+
+    .section-7 .happy-new-year {
+      animation-name: ani7-year;
+      animation-timing-function: linear;
+      animation-duration: 14s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani7-year {
+      0% {
+        transform: translate(0, -300px);
+      }
+
+      100% {
+        transform: translate(-1280px, -300px);
+      }
+    }
+
+    .section-8 {
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .section-8 .fu-1 {
+      text-align: center;
+    }
+
+    .end-year {
+      width: 400px;
+      font: 5em sans-serif;
+      color: gold;
+      text-align: center;
+      position: absolute;
+      top: 40px;
+      left: 80px;
+    }
+
+    .end-year .in-line {
+      /* inline 和 inline-block区别 */
+      display: inline-block;
+    }
+
+    .section-8 .fu-1 {
+      animation-name: ani8-fu;
+      animation-duration: 12s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani8-fu {
+      5% {
+        transform: scale(1.5);
+      }
+
+      80% {
+        transform: scale(2.5);
+      }
+
+      100% {
+        transform: scale(0);
+      }
+    }
+
+    .section-8 .year-1 {
+      animation-name: ani8-year-1;
+      animation-duration: 1s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani8-year-1 {
+      30% {
+        transform: scale(3);
+      }
+    }
+
+    .section-8 .year-2 {
+      animation-name: ani8-year-2;
+      animation-duration: 1s;
+      animation-delay: 2s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani8-year-2 {
+      30% {
+        transform: scale(3);
+      }
+    }
+
+    .section-8 .year-3 {
+      animation-name: ani8-year-3;
+      animation-duration: 1s;
+      animation-delay: 4s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani8-year-3 {
+      30% {
+        transform: scale(3);
+      }
+    }
+
+    .section-8 .year-4 {
+      animation-name: ani8-year-4;
+      animation-duration: 1s;
+      animation-delay: 6s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani8-year-4 {
+      30% {
+        transform: scale(3);
+      }
+    }
+
+    .section-8 .year-5 {
+      animation-name: ani8-year-5;
+      animation-duration: 1s;
+      animation-delay: 7s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani8-year-5 {
+      30% {
+        transform: scale(3);
+      }
+    }
+
+    .section-8 .year-6 {
+      animation-name: ani8-year-6;
+      animation-duration: 1s;
+      animation-delay: 8s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani8-year-6 {
+      30% {
+        transform: scale(3);
+      }
+    }
+
+    .section-8 .year-7 {
+      animation-name: ani8-year-7;
+      animation-duration: 1s;
+      animation-delay: 9s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes ani8-year-7 {
+      30% {
+        transform: scale(3);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="section">
+
+  </div>
+  <script>
+    var section1Html = ' <div class="section-1">\
+            <div class="canvas-wrapper fu-1">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+            <div class="canvas-wrapper fu-2">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+            <div class="canvas-wrapper fu-3">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+        </div>';
+    var section2Html = ' <div class="section-2">\
+            <div class="canvas-wrapper fu-1">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+            <div class="canvas-wrapper fu-2">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+        </div>';
+    var section3Html = ' <div class="section-3">\
+            <div class="canvas-wrapper fu-1">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+        </div>'
+    var section4Html = ' <div class="section-4">\
+            <div class="canvas-wrapper fu-1">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+            <div class="canvas-wrapper fu-2">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+        </div>';
+    var section5Html = '  <div class="section-content section-5">\
+            <div class="bomb-line">\
+                <div class="canvas-wrapper bomb-1">\
+                    <canvas class="bomb-body" width="300" height="320"></canvas>\
+                </div>\
+                <div class="canvas-wrapper bomb-2">\
+                    <canvas class="bomb-body" width="300" height="320"></canvas>\
+                </div>\
+                <div class="canvas-wrapper bomb-3">\
+                    <canvas class="bomb-body" width="300" height="320"></canvas>\
+                </div>\
+            </div>\
+            <div class="clear"></div>\
+            <div class="cover-line">\
+                <div class="canvas-wrapper cover cover-1">\
+                </div> \
+                <div class="canvas-wrapper cover cover-2">\
+                </div><div class="canvas-wrapper cover cover-3">\
+                </div>\
+            </div>\
+        </div>';
+    var section6Html = '  <div class="section-content section-6">\
+            <div class="canvas-wrapper lantern-1">\
+                <canvas class="fu-body" width="240" height="450"></canvas>\
+            </div>\
+        </div>';
+    var section7Html = ' <div class="section-content section-7">\
+<div class="canvas-wrapper fu-1">\
+    <canvas class="fu-body" width="240" height="240"></canvas>\
+</div>\
+<div class="canvas-wrapper fu-2">\
+    <canvas class="fu-body" width="240" height="240"></canvas>\
+</div>\
+<div class="canvas-wrapper fu-3">\
+    <canvas class="fu-body" width="240" height="240"></canvas>\
+</div>\
+<div class="canvas-wrapper fu-4">\
+    <canvas class="fu-body" width="240" height="240"></canvas>\
+</div>\
+<div class="happy-new-year">\
+    <div>过年啦</div>\
+    <div>过年啦</div>\
+</div>\
+</div>';
+    var section8Html = ' <div class="section-content section-8">\
+            <div class=" fu-1">\
+                <canvas class="fu-body" width="240" height="240"></canvas>\
+            </div>\
+            <div class="end-year">\
+                <div>\
+                    <div class="in-line year-1">欢</div>\
+                    <div class="in-line year-2">欢</div>\
+                    <div class="in-line year-3">喜</div>\
+                    <div class="in-line year-4">喜</div>\
+                </div>\
+                <div>\
+                    <div class="in-line year-5">过</div>\
+                    <div class="in-line year-6">大</div>\
+                    <div class="in-line year-7">年</div>\
+                </div>\
+            </div>\
+        </div>';
+
+    function drawFu() {
+      var fuArr = document.getElementsByClassName("fu-body");
+      for (let i = 0; i < fuArr.length; i++) {
+        ctx = fuArr[i].getContext("2d")
+        ctx.fillStyle = "#ff0000";
+        ctx.beginPath();
+        ctx.moveTo(120, 0);
+        ctx.lineTo(240, 120);
+        ctx.lineTo(120, 240);
+        ctx.lineTo(0, 120);
+        ctx.fill();
+        ctx.fillStyle = "#000";
+        ctx.font = "100px 黑体";
+        ctx.fillText("福", 70, 150);
+      }
+    }
+
+    function drawLantern() {
+      var fuArr = document.getElementsByClassName("fu-body");
+      for (let i = 0; i < fuArr.length; i++) {
+        ctx = fuArr[i].getContext("2d")
+        ctx.fillStyle = "#ff0000";
+        //x,y,r,start,end
+        ctx.arc(120, 170, 120, 0, 2 * Math.PI)
+        ctx.fill();
+        ctx.fillRect(90, 30, 60, 40);
+        ctx.fillStyle = "gold";
+        ctx.fillRect(115, 0, 5, 40);
+        ctx.font = "120px 黑体";
+        ctx.fillText("福", 60, 220);
+        ctx.fillRect(75, 270, 5, 150);
+        ctx.fillRect(105, 280, 5, 130);
+        ctx.fillRect(135, 275, 5, 140);
+        ctx.fillRect(165, 270, 5, 160);
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.lineWidth = 8;
+        ctx.arc(100, 175, 70, .6 * Math.PI, 1.4 * Math.PI);
+        // ctx.beginPath();
+        ctx.arc(160, 175, 70, .6 * Math.PI, 1.4 * Math.PI);
+        ctx.arc(220, 175, 70, .6 * Math.PI, 1.4 * Math.PI);
+        ctx.arc(220, 175, 70, .6 * Math.PI, 1.4 * Math.PI);
+        ctx.stroke();
+      }
+    }
+
+    function drawBomb() {
+      var fuArr = document.getElementsByClassName("bomb-body");
+      for (let i = 0; i < fuArr.length; i++) {
+        ctx = fuArr[i].getContext("2d")
+        ctx.fillStyle = "#ff0000";
+        ctx.beginPath();
+        //右侧第一个 鞭炮开始
+        ctx.moveTo(50, 0);
+        ctx.lineTo(55, 0);
+        ctx.lineTo(57, 23);
+        ctx.lineTo(63, 23);
+        ctx.lineTo(72, 14);
+        ctx.lineTo(110, 47);
+        ctx.lineTo(100, 55);
+        ctx.lineTo(63, 23);
+        ctx.lineTo(57, 23);
+        //右侧第二个开始
+        ctx.lineTo(65, 100);
+        ctx.lineTo(74, 90);
+        ctx.lineTo(105, 120);
+        ctx.lineTo(95, 130);
+        ctx.lineTo(65, 100);
+        //右侧第3个开始
+        ctx.lineTo(75, 175);
+        ctx.lineTo(85, 168);
+        ctx.lineTo(115, 205);
+        ctx.lineTo(105, 212);
+        ctx.lineTo(75, 175);
+        //底部
+        ctx.lineTo(85, 315);
+        ctx.lineTo(80, 315);
+        //左侧倒数第一个开始
+        ctx.lineTo(75, 270);
+        ctx.lineTo(60, 305);
+        ctx.lineTo(50, 300);
+        ctx.lineTo(65, 265);
+        ctx.lineTo(75, 270);
+        //左侧倒数第2个开始
+        ctx.lineTo(70, 210);
+        ctx.lineTo(40, 245);
+        ctx.lineTo(55, 210);
+        ctx.lineTo(70, 210);
+        //左侧倒数第3个开始
+        ctx.lineTo(60, 130);
+        ctx.lineTo(40, 180);
+        ctx.lineTo(30, 180);
+        ctx.lineTo(50, 130);
+        ctx.lineTo(60, 130);
+        ctx.fill();
+        ctx.fillStyle = 'Orange';
+        ctx.font = "bold 20px sans-serif"
+        ctx.textBaseline = "top";
+        ctx.fillText("劈里", 80, 255);
+        ctx.fillText("啪啦", 95, 275);
+        ctx.fillText("开门红", 15, 50);
+      }
+    }
+
+    function startSection(html) {
+      var el = document.getElementById("section");
+      el.innerHTML = html;
+      drawFu();
+    }
+    startSection(section1Html)
+    setTimeout(() => {
+      startSection(section2Html)
+    }, 2000);
+    setTimeout(() => {
+      startSection(section3Html)
+    }, 2400);
+    setTimeout(() => {
+      startSection(section4Html)
+    }, 6000);
+    setTimeout(() => {
+      var el = document.getElementById("section");
+      el.innerHTML = section5Html;
+      drawBomb();
+    }, 9000);
+    setTimeout(() => {
+      var el = document.getElementById("section");
+      el.innerHTML = section6Html;
+      drawLantern();
+    }, 11000);
+    setTimeout(() => {
+      startSection(section7Html)
+    }, 21000);
+    setTimeout(() => {
+      startSection(section8Html)
+    }, 35000);
+  </script>
+</body>
+
+</html>
