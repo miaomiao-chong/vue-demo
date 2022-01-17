@@ -6,6 +6,7 @@
     <router-link to="/rank">rank</router-link><br />
     <router-link to="/debounce">debounce</router-link><br />
     <router-link to="/fenye">分页</router-link><br />
+    <router-link to="/switchTab">switchTab</router-link><br />
     <!-- <router-link to="/marquee">marquee</router-link> -->
   </div>
 </template>

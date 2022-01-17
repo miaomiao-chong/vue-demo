@@ -1,14 +1,23 @@
 <!--  -->
 <template>
   <div id="hello-vue" class="demo">
-    <input v-model="inputData" type="text" style="display:block; margin:0 auto" />
-    <div ref="rootRef" class="scrollCon" style="margin-top:20px">
+    <input
+      v-model="inputData"
+      type="text"
+      style="display: block; margin: 0 auto"
+    />
+    <div ref="rootRef" class="scrollCon" style="margin-top: 20px">
       <ul class="songContainer">
-        <li v-for="(item, index) in songs" :key="index">
+        <li v-for="(item, index) in songs" :key="index" style="font-size: 8px">
           {{ item.songName }}--{{ item.singer }}
         </li>
-        <div style="width: 100% ; padding-bottom:20px" v-show="isPullUpLoad">
-           <img src="https://img-blog.csdnimg.cn/fc901b1ca5974221b33e0d4b60eb64d2.gif" style="margin:0 auto ; display:block" width="30" height="30"/>
+        <div style="width: 100%; padding-bottom: 20px" v-show="isPullUpLoad">
+          <img
+            src="https://img-blog.csdnimg.cn/fc901b1ca5974221b33e0d4b60eb64d2.gif"
+            style="margin: 0 auto; display: block"
+            width="30"
+            height="30"
+          />
         </div>
         <div v-if="!hasMore && inputData">--------已经加载完了--------</div>
       </ul>
@@ -26,7 +35,7 @@ BScroll.use(ObserveDom);
 export default {
   data() {
     return {
-      inputData: "ffafa",
+      inputData: "ff",
       songs: [],
       hasMore: true,
       songCount: 0,
@@ -46,8 +55,15 @@ export default {
         this.initSearch();
         this.inputData = val;
         const data = await this.searchFun();
-        (this.songs = data.songs), (this.hasMore = data.hasMore);
-      })
+        this.songs = data.songs;
+        this.hasMore = data.hasMore;
+        await this.$nextTick()
+        this.makeItScrollable()
+      }),
+      // watch api第三个参数   将立即以表达式的当前值触发回调
+      {
+        immediate: true,
+      }
     );
   },
   mounted() {
@@ -97,9 +113,11 @@ export default {
         },
       });
       console.log(result);
+
       return result.data;
     },
-  async  pullingUpHandler() {
+    // 触底回调
+    async pullingUpHandler() {
       this.isPullUpLoad = true;
       console.log(12345);
       this.page++;
@@ -110,13 +128,24 @@ export default {
       this.bs.finishPullUp();
       this.bs.refresh();
       this.isPullUpLoad = false;
+  
+    },
+    // 不满一屏优化
+    async makeItScrollable() {
+      console.log(this.bs.maxScrollY);
+      if (this.bs.maxScrollY >= -1) {
+        this.page++
+        const data = await this.searchFun();
+        this.songs = this.songs.concat(data.songs);
+        this.hasMore = data.hasMore;
+      }
     },
   },
 };
 </script>
 <style >
 .scrollCon {
-  height: 400px;
+  height: 300px;
   overflow: hidden;
   padding-bottom: 30px;
 }

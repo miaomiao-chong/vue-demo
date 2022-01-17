@@ -4,6 +4,7 @@ import RankList from '../views/rank'
 import Debounce from '../views/debounce'
 import Index from '../views/index'
 import Fenye from '../views/fenye'
+import SwitchTab from '../views/switch'
 const routes = [
   {
     path: '/',
@@ -33,6 +34,11 @@ const routes = [
     path: '/fenye',
     name: 'fenye',
     component : Fenye
+  },
+  {
+    path: '/switchTab',
+    name: 'switchTab',
+    component : SwitchTab
   }
 ]
 

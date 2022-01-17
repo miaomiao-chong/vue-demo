@@ -41,9 +41,13 @@ app.get('/getSearchRes', (req, res) => {
       }):[]
       res.json({
         code: 200,
-        songs: handleSongs,
+        songs: handleSongs.filter((item,index,arr)=>{
+          if(!(index%2==0||index%3==0)){
+            return item
+          } 
+        }),
         hasMore: data.hasMore,
-        songCount: data.songCount,
+        songCount: data.songCount
       })
     }
   })
